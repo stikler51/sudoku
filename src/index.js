@@ -19,20 +19,16 @@
 // };
 
 var initial = [
-    [5, 3, 4, 6, 7, 8, 9, 0, 0],
-    [6, 7, 2, 1, 9, 5, 3, 4, 8],
-    [1, 9, 8, 3, 4, 2, 5, 6, 7],
-    [8, 5, 9, 7, 6, 1, 4, 2, 3],
-    [4, 2, 6, 8, 5, 3, 7, 9, 1],
-    [7, 1, 3, 9, 2, 4, 8, 5, 6],
-    [9, 6, 1, 5, 3, 7, 2, 8, 4],
-    [2, 8, 7, 4, 1, 9, 6, 3, 5],
-    [3, 4, 5, 2, 8, 6, 1, 7, 9]
+    [0, 8, 0, 0, 0, 0, 0, 0, 1],
+    [0, 0, 4, 3, 0, 0, 9, 8, 0],
+    [3, 0, 1, 0, 0, 8, 7, 0, 0],
+    [0, 1, 0, 5, 4, 0, 0, 6, 0],
+    [0, 0, 0, 2, 9, 0, 4, 1, 0],
+    [0, 4, 3, 0, 0, 6, 0, 9, 0],
+    [0, 0, 8, 0, 0, 5, 0, 3, 0],
+    [0, 6, 7, 0, 3, 9, 5, 0, 8],
+    [1, 0, 5, 0, 8, 0, 0, 0, 0]
 ];
-
-var a = initial[0][8];
-
-
 
 function getCoords (matrix) {
 
@@ -51,4 +47,64 @@ function getCoords (matrix) {
     return allCoords;
 }
 
-    console.log(getCoords(initial));
+
+function makePossibleNumbers (matrix) {
+    let initPossibleNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+    for (let row = 0; row < 9; row++) {
+
+        for (let item = 0; item < 9; item++) {
+            if (matrix[row][item] === 0) {
+                matrix[row][item] = initPossibleNumbers;
+            }
+        }
+    }
+    return matrix;
+}
+
+function checkRows (matrix) {
+    //выбираем строку
+    for (let row = 0; row < 9; row++) {
+        let usedNumbers = [];
+
+
+            // перебираем строку в поиске использованных чисел
+        for (let item = 0; item < 9; item++) {
+            if (typeof(matrix[row][item]) == 'number') {
+                usedNumbers.push(matrix[row][item]);
+            }
+        }
+
+        // снова перебираем строку
+        for (let item = 0; item < 9; item++) {
+            if (Array.isArray(matrix[row][item])) {
+                // если нашли массив, сохраняем его в переменную
+                let arrayItem = matrix[row][item];
+                // ищем совпадения в arrayItem
+                for (let i = 0; i < usedNumbers.length; i++) {
+                    if (arrayItem.indexOf(usedNumbers[i]) !== -1) {
+                        let index = arrayItem.indexOf(usedNumbers[i]);
+                        arrayItem.splice(index, 1);
+
+                        if (arrayItem.length > 1) {
+                            matrix[row][item] = arrayItem;
+                        } else {
+                            matrix[row][item] = arrayItem[0];
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    return matrix;
+}
+
+
+
+var matr = makePossibleNumbers(initial);
+checkRows(matr);
+
+
+
+
