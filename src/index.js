@@ -1,21 +1,6 @@
 // module.exports = function solveSudoku(matrix) {
 //   // your solution
-//
-//     let copyMatrix = matrix;
-//     let allCcords = [];
-//     let coords = [];
-//
-//     for (let row = 0; row < 10; row++) {
-//         for (let item = 0; item < 10; item++) {
-//             if (copyMatrix[row][item] === 0) {
-//                 coords = [row, item];
-//                 allCoords.push(coords)
-//             }
-//         }
-//     }
-//
-//     console.log(coords);
-//
+
 // };
 
 // https://habr.com/ru/post/134071/
@@ -36,10 +21,11 @@ var initial = [
 var a = makePossibleNumbers(initial);
 //console.log(a);
 a = checkRows(a);
-console.log(a);
+
 a = checkCols(a);
-console.log(a);
-//makeUsedNumbers(a);
+
+a = checkBlocks(a);
+
 
 
 
@@ -103,7 +89,7 @@ function checkRows (matrix) {
                 }
 
                 if (tempArray.length == 1) {
-                    matrix[row][item] = tempArray[0];
+                    matrix[row][item] = +tempArray[0];
                 } else {
                     matrix[row][item] = tempArray.join(',')
                 }
@@ -145,7 +131,7 @@ function checkCols (matrix) {
                 }
 
                 if (tempArray.length == 1) {
-                    matrix[row][item] = tempArray[0];
+                    matrix[row][item] = +tempArray[0];
                 } else {
                     matrix[row][item] = tempArray.join(',')
                 }
@@ -158,50 +144,103 @@ function checkCols (matrix) {
     return matrix;
 }
 
+function checkBlocks (matrix) {
+
+    let blockRow = 3;
+    let blockCol = 3;
+    let row = 0;
+    let item = 0;
+    let matr = [];
+
+    while (1) {
+
+        console.log('row ' + row + ' end ' + blockRow);
+        console.log('item ' + item + ' end ' + blockCol);
+        let i = item;
+        let b = item;
+        let r = row;
+        let usedNumbers = makeUsedNumbers(matrix, row, blockRow, i, blockCol);
+        console.log(usedNumbers);
+
+        matr = blocks(matrix, r, blockRow, b, blockCol, usedNumbers);
 
 
-// function checkCols (matrix) {
-//     //выбираем столбец
-//     for (let item = 0; item < 9; item++) {
-//         let usedNumbers = [];
-//
-//
-//         // перебираем столбец в поиске использованных чисел
-//         for (let row = 0; row < 9; row++) {
-//             if (typeof(matrix[row][item]) == 'number') {
-//                 usedNumbers.push(matrix[row][item]);
-//             }
-//         }
-//
-//         // снова перебираем столбец
-//         for (let row = 0; row < 9; row++) {
-//             if (Array.isArray(matrix[row][item])) {
-//                 // если нашли массив, сохраняем его в переменную
-//                 let arrayItem = matrix[row][item];
-//                 // ищем совпадения в arrayItem и usedNumbers
-//                 for (let i = 0; i < usedNumbers.length; i++) {
-//                     if (arrayItem.indexOf(usedNumbers[i]) !== -1) {
-//                         let index = arrayItem.indexOf(usedNumbers[i]); // находим индекс совпадения
-//                         arrayItem.splice(index, 1); // удаляем число
-//
-//                         // если в массиве остались числа
-//                         if (arrayItem.length > 1) {
-//                             // записываем массив в ячейку
-//                             matrix[row][item] = arrayItem;
-//
-//                         } else {
-//                             // если осталось только одно число в массиве - записываем его в ячейку
-//                             matrix[row][item] = arrayItem[0];
-//
-//                         }
-//                     }
-//                 }
-//
-//             }
-//         }
-//     }
-//     return matrix;
-// }
+
+        if (blockRow >= 9 && blockCol >= 9) {
+            break;
+        }
+
+        blockCol += 3;
+        if (blockCol > 9) {
+            blockCol = 3;
+            blockRow += 3;
+            row += 3;
+            item = 0;
+        }
+    }
+
+    console.log(matr);
+
+    function makeUsedNumbers (matrix, rowStart, rowEnd, colStart, colEnd) {
+        let usedNumbers = [];
+        let rowSt = rowStart;
+        let rowE = rowEnd;
+        let colE = colEnd;
+        for (rowSt; rowSt < rowE; rowSt++) {
+            item = colStart;
+            for (item; item < colE; item++) {
+                if (typeof(matrix[rowSt][item]) == 'number') {
+                    usedNumbers.push(matrix[rowSt][item]);
+                }
+            }
+        }
+
+        return usedNumbers;
+    }
+
+    function blocks (matrix, rowStart, rowEnd, colStart, colEnd, usedNumbers) {
+        let rowSt = rowStart;
+        let rowE = rowEnd;
+        let colE = colEnd;
+        for (rowSt; rowSt < rowE; rowSt++) {
+            item = colStart;
+            // console.log('--------------------------------');
+            // console.log('row ' + row + ' end ' + blockRow);
+            // console.log('item ' + item + ' end ' + blockCol);
+            // console.log('--------------------------------');
+            for (item; item < colE; item++) {
+
+                if (typeof(matrix[rowSt][item]) !== 'number') {
+
+
+
+                    let tempArray = matrix[rowSt][item].split(',');
+
+                    for (let i = 0; i < usedNumbers.length; i++) {
+                        let index = tempArray.indexOf(usedNumbers[i] + "");
+                        if (index == -1) {
+                            continue;
+                        }
+                        tempArray.splice(index, 1);
+                    }
+
+                    if (tempArray.length == 1) {
+                        matrix[row][item] = +tempArray[0];
+                    } else {
+                        matrix[row][item] = tempArray.join(',')
+                    }
+
+                }
+            }
+        }
+        return matrix;
+    }
+
+
+}
+
+
+
 
 
 
