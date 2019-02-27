@@ -18,6 +18,8 @@
 //
 // };
 
+// https://habr.com/ru/post/134071/
+
 var initial = [
     [6, 5, 0, 7, 3, 0, 0, 8, 0],
     [0, 0, 0, 4, 8, 0, 5, 3, 0],
@@ -32,7 +34,11 @@ var initial = [
 
 
 var a = makePossibleNumbers(initial);
-makeUsedNumbers(a);
+//console.log(a);
+a = checkRows(a);
+console.log(a);
+a = checkCols(a);
+console.log(a);
 //makeUsedNumbers(a);
 
 
@@ -56,7 +62,7 @@ function getCoords (matrix) {
 
 
 function makePossibleNumbers (matrix) {
-    let initPossibleNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let initPossibleNumbers = '1,2,3,4,5,6,7,8,9'; //не баг, а фича: с массивом не работает перебор и удаление элементов
 
     for (let row = 0; row < 9; row++) {
 
@@ -67,86 +73,92 @@ function makePossibleNumbers (matrix) {
         }
     }
     return matrix;
-}
+};
 
-function makeUsedNumbers (matrix) {
+function checkRows (matrix) {
 
     for (let row = 0; row < 9; row++ ) {
 
         let usedNumbers = [];
         for (let item = 0; item < 9; item++) {
+
             if (typeof(matrix[row][item]) == 'number') {
-                usedNumbers.push(matrix[row][item])
+                usedNumbers.push(matrix[row][item]);
             }
         }
-        //console.log ('used' + ' ' + usedNumbers);
+        //console.log (usedNumbers);
 
         for (let item = 0; item < 9 ; item++) {
 
-             if (Array.isArray(matrix[row][item])) {
-                 matrix[row][item].push('yo');
-                 console.log(matrix[row]);
+            if (typeof(matrix[row][item]) !== 'number') {
 
-                 //console.log('item' + ' ' + item);
-                 //let currentItem = matrix[row][item];
-                 //console.log(currentItem);
-                 //matrix[row][item].push('yo'+ item);
+                let tempArray = matrix[row][item].split(',');
 
+                for (let i = 0; i < usedNumbers.length; i++) {
+                    let index = tempArray.indexOf(usedNumbers[i] + "");
+                    if (index == -1) {
+                        continue;
+                    }
+                    tempArray.splice(index, 1);
+                }
 
-                 //console.log(matrix[row])
-             }
-        }
-        break;
-        // console.log (matrix);
+                if (tempArray.length == 1) {
+                    matrix[row][item] = tempArray[0];
+                } else {
+                    matrix[row][item] = tempArray.join(',')
+                }
 
+            }
+         }
+         //console.log (matrix);
     }
+    return matrix;
 }
 
-// function checkRows (matrix) {
-//     //выбираем строку
-//     for (let row = 0; row < 9; row++) {
-//         let usedNumbers = [];
-//
-//
-//             // перебираем строку в поиске использованных чисел
-//         for (let item = 0; item < 9; item++) {
-//             if (typeof(matrix[row][item]) == 'number') {
-//                 usedNumbers.push(matrix[row][item]);
-//             }
-//         }
-//         console.log ('used ' + usedNumbers);
-//
-//         // снова перебираем строку
-//         for (let item = 0; item < 9; item++) {
-//             if (Array.isArray(matrix[row][item])) {
-//                 // если нашли массив, сохраняем его в переменную
-//                 let arrayItem = matrix[row][item];
-//                 // ищем совпадения в arrayItem и usedNumbers
-//                 for (let i = 0; i < usedNumbers.length; i++) {
-//                     if (arrayItem.indexOf(usedNumbers[i]) !== -1) {
-//                         let index = arrayItem.indexOf(usedNumbers[i]); // находим индекс совпадения
-//                         arrayItem.splice(index, 1); // удаляем число
-//                         console.log(arrayItem)
-//
-//                         // если в массиве остались числа
-//                         if (arrayItem.length > 1) {
-//                             // записываем массив в ячейку
-//                             matrix[row][item] = arrayItem[0];
-//
-//                         } else {
-//                             // если осталось только одно число в массиве - записываем его в ячейку
-//                             matrix[row][item] = arrayItem;
-//                         }
-//                     }
-//                     console.log('--------------');
-//                     console.log(matrix);
-//                 }
-//
-//             }
-//         }
-//     }
-//     return matrix;
-// }
+function checkCols (matrix) {
+
+    for (let item = 0; item < 9; item++ ) {
+
+        let usedNumbers = [];
+        for (let row = 0; row < 9; row++) {
+
+            if (typeof(matrix[row][item]) == 'number') {
+                usedNumbers.push(matrix[row][item]);
+            }
+        }
+        // console.log ('-------------------------');
+        // console.log (usedNumbers);
+        // console.log ('-------------------------');
+
+        for (let row = 0; row < 9 ; row++) {
+
+            if (typeof(matrix[row][item]) !== 'number') {
+
+                let tempArray = matrix[row][item].split(',');
+
+                for (let i = 0; i < usedNumbers.length; i++) {
+                    let index = tempArray.indexOf(usedNumbers[i] + "");
+                    if (index == -1) {
+                        continue;
+                    }
+                    tempArray.splice(index, 1);
+                }
+
+                if (tempArray.length == 1) {
+                    matrix[row][item] = tempArray[0];
+                } else {
+                    matrix[row][item] = tempArray.join(',')
+                }
+
+            }
+
+        }
+        //console.log (matrix);
+    }
+    return matrix;
+}
+
+
 
 // function checkCols (matrix) {
 //     //выбираем столбец
