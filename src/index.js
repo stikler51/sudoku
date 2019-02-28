@@ -18,14 +18,18 @@ var initial = [
 ];
 
 
+
+var numberOfZeros = 0;
+
 var a = makePossibleNumbers(initial);
-//console.log(a);
+
 a = checkRows(a);
 
 a = checkCols(a);
 
 a = checkBlocks(a);
 
+console.log(a);
 
 
 
@@ -40,11 +44,13 @@ function getCoords (matrix) {
             if (matrix[row][item] === 0) {
                 coords = [row, item];
                 allCoords.push(coords);
+
             }
         }
     }
     return allCoords;
 }
+
 
 
 function makePossibleNumbers (matrix) {
@@ -55,6 +61,7 @@ function makePossibleNumbers (matrix) {
         for (let item = 0; item < 9; item++) {
             if (matrix[row][item] === 0) {
                 matrix[row][item] = initPossibleNumbers;
+                numberOfZeros++;
             }
         }
     }
@@ -90,6 +97,7 @@ function checkRows (matrix) {
 
                 if (tempArray.length == 1) {
                     matrix[row][item] = +tempArray[0];
+                    numberOfZeros--;
                 } else {
                     matrix[row][item] = tempArray.join(',')
                 }
@@ -132,6 +140,7 @@ function checkCols (matrix) {
 
                 if (tempArray.length == 1) {
                     matrix[row][item] = +tempArray[0];
+                    numberOfZeros--;
                 } else {
                     matrix[row][item] = tempArray.join(',')
                 }
@@ -154,17 +163,12 @@ function checkBlocks (matrix) {
 
     while (1) {
 
-        console.log('row ' + row + ' end ' + blockRow);
-        console.log('item ' + item + ' end ' + blockCol);
         let i = item;
         let b = item;
         let r = row;
         let usedNumbers = makeUsedNumbers(matrix, row, blockRow, i, blockCol);
-        console.log(usedNumbers);
 
         matr = blocks(matrix, r, blockRow, b, blockCol, usedNumbers);
-
-
 
         if (blockRow >= 9 && blockCol >= 9) {
             break;
@@ -177,9 +181,10 @@ function checkBlocks (matrix) {
             row += 3;
             item = 0;
         }
-    }
 
-    console.log(matr);
+    }
+    return matr;
+
 
     function makeUsedNumbers (matrix, rowStart, rowEnd, colStart, colEnd) {
         let usedNumbers = [];
@@ -199,21 +204,14 @@ function checkBlocks (matrix) {
     }
 
     function blocks (matrix, rowStart, rowEnd, colStart, colEnd, usedNumbers) {
+
         let rowSt = rowStart;
         let rowE = rowEnd;
         let colE = colEnd;
         for (rowSt; rowSt < rowE; rowSt++) {
             item = colStart;
-            // console.log('--------------------------------');
-            // console.log('row ' + row + ' end ' + blockRow);
-            // console.log('item ' + item + ' end ' + blockCol);
-            // console.log('--------------------------------');
             for (item; item < colE; item++) {
-
                 if (typeof(matrix[rowSt][item]) !== 'number') {
-
-
-
                     let tempArray = matrix[rowSt][item].split(',');
 
                     for (let i = 0; i < usedNumbers.length; i++) {
@@ -222,17 +220,18 @@ function checkBlocks (matrix) {
                             continue;
                         }
                         tempArray.splice(index, 1);
-                    }
+                        if (tempArray.length == 1) {
+                            matrix[rowSt][item] = +tempArray[0];
+                            numberOfZeros--;
+                        } else {
+                            matrix[rowSt][item] = tempArray.join(',')
 
-                    if (tempArray.length == 1) {
-                        matrix[row][item] = +tempArray[0];
-                    } else {
-                        matrix[row][item] = tempArray.join(',')
+                        }
                     }
-
                 }
             }
         }
+
         return matrix;
     }
 
