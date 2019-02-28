@@ -23,13 +23,26 @@ var numberOfZeros = 0;
 
 var a = makePossibleNumbers(initial);
 
-a = checkRows(a);
+while (numberOfZeros > 0) {
+    a = checkRows(a);
 
-a = checkCols(a);
+    a = checkCols(a);
 
-a = checkBlocks(a);
+    a = checkBlocks(a);
 
-console.log(a);
+    a = findDoublesPerRow(a);
+    console.log(a);
+    console.log('--------------------------------');
+
+}
+
+
+
+// a = checkRows(a);
+//
+// a = checkCols(a);
+//
+// a = checkBlocks(a);
 
 
 
@@ -51,6 +64,62 @@ function getCoords (matrix) {
     return allCoords;
 }
 
+function findDoublesPerRow (matrix) {
+    for (let row = 0; row < 9; row++ ) {
+        let count = 1;
+        for (let item = 0; item < 9 ; item++) {
+
+            if (typeof(matrix[row][item]) !== 'number') {
+
+                let tempItem = matrix[row][item];
+
+                for (let i = item + 1 ; i < 9; i++) {
+                    if (tempItem == matrix[row][i]) {
+                        count++;
+                        //console.log(tempItem + ' row: ' + row + ' item:' + item + ' | ' + matrix[row][i] + ' row: ' + row + ' item:' + i);
+
+                        if (count > 1 && tempItem.split(',').length == count) {
+                            let usedNumbers = tempItem.split(',');
+
+                            //-----------------------------------------------------------------------------------------------
+
+                            for (let item = 0; item < 9 ; item++) {
+
+                                if (typeof(matrix[row][item]) !== 'number') {
+
+                                    let tempArray = matrix[row][item].split(',');
+
+                                    for (let i = 0; i < usedNumbers.length; i++) {
+                                        let index = tempArray.indexOf(usedNumbers[i] + "");
+
+                                        if (tempArray + '' == usedNumbers + '') {
+                                            continue;
+                                        }
+                                        if (index == -1) {
+                                            continue;
+                                        }
+                                        tempArray.splice(index, 1);
+                                    }
+
+                                    if (tempArray.length == 1) {
+                                        matrix[row][item] = +tempArray[0];
+                                        numberOfZeros--;
+                                    } else {
+                                        matrix[row][item] = tempArray.join(',')
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return matrix;
+}
 
 
 function makePossibleNumbers (matrix) {
