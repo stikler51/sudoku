@@ -25,15 +25,14 @@ var a = makePossibleNumbers(initial);
 
 while (numberOfZeros > 0) {
     a = checkRows(a);
-
+    a = findDoublesPerRow(a);
     a = checkCols(a);
 
-    a = checkBlocks(a);
+    //a = findDoublesPerCol(a);
 
-    a = findDoublesPerRow(a);
+    a = checkBlocks(a);
     console.log(a);
     console.log('--------------------------------');
-
 }
 
 
@@ -62,6 +61,63 @@ function getCoords (matrix) {
         }
     }
     return allCoords;
+}
+
+function findDoublesPerCol (matrix) {
+    for (let item = 0; item < 9; item++) {
+        let count = 1;
+        for (let row = 0; row < 9 ; row++) {
+
+            if (typeof(matrix[row][item]) !== 'number') {
+
+                let tempItem = matrix[row][item];
+
+                for (let i = row + 1 ; i < 9; i++) {
+                    if (tempItem == matrix[i][item]) { //есть сомнения
+                        count++;
+                        //console.log(tempItem + ' row: ' + row + ' item:' + item + ' | ' + matrix[row][i] + ' row: ' + row + ' item:' + i);
+
+                        if (count > 1 && tempItem.split(',').length == count) {
+                            let usedNumbers = tempItem.split(',');
+
+                            //-----------------------------------------------------------------------------------------------
+
+                            for (let row = 0; row < 9 ; row++) {
+
+                                if (typeof(matrix[row][item]) !== 'number') {
+
+                                    let tempArray = matrix[row][item].split(',');
+
+                                    for (let i = 0; i < usedNumbers.length; i++) {
+                                        let index = tempArray.indexOf(usedNumbers[i] + "");
+
+                                        if (tempArray + '' == usedNumbers + '') {
+                                            continue;
+                                        }
+                                        if (index == -1) {
+                                            continue;
+                                        }
+                                        tempArray.splice(index, 1);
+                                    }
+
+                                    if (tempArray.length == 1) {
+                                        matrix[row][item] = +tempArray[0];
+                                        numberOfZeros--;
+                                    } else {
+                                        matrix[row][item] = tempArray.join(',')
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return matrix;
 }
 
 function findDoublesPerRow (matrix) {
