@@ -23,18 +23,19 @@ var numberOfZeros = 0;
 
 var a = makePossibleNumbers(initial);
 
-while (numberOfZeros > 0) {
-    a = checkRows(a);
-    a = findDoublesPerRow(a);
-    a = checkCols(a);
+a = checkRows(a);
+a = checkCols(a);
+a = checkBlocks(a);
+a = findDoublesPerRow(a);
+a = findDoublesPerCol(a);
+//a = findDoublesPerRow(a);
+//
 
-    //a = findDoublesPerCol(a);
+//a = findDoublesPerCol(a);
 
-    a = checkBlocks(a);
-    console.log(a);
-    console.log('--------------------------------');
-}
-
+//a = checkBlocks(a);
+console.log(a);
+console.log('--------------------------------');
 
 
 // a = checkRows(a);
@@ -65,15 +66,16 @@ function getCoords (matrix) {
 
 function findDoublesPerCol (matrix) {
     for (let item = 0; item < 9; item++) {
-        let count = 1;
-        for (let row = 0; row < 9 ; row++) {
 
+        for (let row = 0; row < 9 ; row++) {
+            let count = 1;
             if (typeof(matrix[row][item]) !== 'number') {
 
                 let tempItem = matrix[row][item];
-
+                let nextItem = 0;
                 for (let i = row + 1 ; i < 9; i++) {
-                    if (tempItem == matrix[i][item]) { //есть сомнения
+                    nextItem = matrix[i][item];
+                    if (tempItem == nextItem) { //есть сомнения
                         count++;
                         //console.log(tempItem + ' row: ' + row + ' item:' + item + ' | ' + matrix[row][i] + ' row: ' + row + ' item:' + i);
 
