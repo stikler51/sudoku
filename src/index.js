@@ -28,13 +28,14 @@ a = checkCols(a);
 a = checkBlocks(a);
 a = findDoublesPerRow(a);
 a = findDoublesPerCol(a);
+a = findDoublesPerBlock(a);
 //a = findDoublesPerRow(a);
 //
 
 //a = findDoublesPerCol(a);
 
 //a = checkBlocks(a);
-console.log(a);
+//console.log(a);
 console.log('--------------------------------');
 
 
@@ -63,6 +64,99 @@ function getCoords (matrix) {
     }
     return allCoords;
 }
+
+
+function findDoublesPerBlock (matrix) {
+    let blockRow = 3;
+    let blockCol = 3;
+    let row = 0;
+    let item = 0;
+    let matr = [];
+
+    while (1) {
+
+        let i = item;
+        let b = item;
+        let r = row;
+        let usedNumbers = makeUsedNumbers(matrix, row, blockRow, i, blockCol);
+
+        //matr = blocks(matrix, r, blockRow, b, blockCol, usedNumbers);
+
+        if (blockRow >= 9 && blockCol >= 9) {
+            break;
+        }
+
+        blockCol += 3;
+        if (blockCol > 9) {
+            blockCol = 3;
+            blockRow += 3;
+            row += 3;
+            item = 0;
+        }
+
+    }
+    return matr;
+
+    function makeUsedNumbers (matrix, rowStart, rowEnd, colStart, colEnd) {
+        let usedNumbers = [];
+        let rowSt = rowStart;
+        let rowE = rowEnd;
+        let colE = colEnd;
+
+        for (rowSt; rowSt < rowE; rowSt++) {
+            let count = 1;
+            let item = colStart;
+            for (item; item < colE; item++) {
+
+
+                let tempItem = matrix[rowSt][item];
+                if (typeof(matrix[rowSt][item]) !== 'number') {
+
+                    usedNumbers.push(tempItem);
+
+
+                    //console.log(tempItem + '------>');
+                    //let it = 0;
+
+                    // for (let r = rowSt; r < rowE; r++){
+                    //     if (item == colE - 1) {
+                    //         it = 0;
+                    //         if (r < rowE - 1) {
+                    //             r++;
+                    //         }
+                    //     } else {
+                    //         it = item + 1;
+                    //     }
+                    //     for (it; it < colE; it++){
+                    //
+                    //         if (typeof(matrix[r][it]) !== 'number') {
+                    //             console.log(tempItem + ' temp' + ' row:' + rowSt + ' col:'+ item);
+                    //             console.log(matrix[r][it] + ' row:' + r + ' col:'+ it);
+                    //             if (tempItem == matrix[r][it]) {
+                    //                 console.log('------------------------');
+                    //                 console.log(matrix[r][it]);
+                    //                 console.log('yo');
+                    //                 console.log('------------------------');
+                    //             }
+                    //         }
+                    //
+                    //     }
+                    // }
+                }
+
+
+
+
+
+
+                }
+            }
+        console.log(usedNumbers);
+        }
+
+        return usedNumbers;
+    }
+
 
 function findDoublesPerCol (matrix) {
     for (let item = 0; item < 9; item++) {
