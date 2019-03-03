@@ -1,35 +1,137 @@
-//module.exports = function solveSudoku(matrix) {
-  // your solution
+module.exports = function solveSudoku(matrix) {
+    // your solution
 
-    var matrix = [
-        [6, 5, 0, 7, 3, 0, 0, 8, 0],
-        [0, 0, 0, 4, 8, 0, 5, 3, 0],
-        [8, 4, 0, 9, 2, 5, 0, 0, 0],
-        [0, 9, 0, 8, 0, 0, 0, 0, 0],
-        [5, 3, 0, 2, 0, 9, 6, 0, 0],
-        [0, 0, 6, 0, 0, 0, 8, 0, 0],
-        [0, 0, 9, 0, 0, 0, 0, 0, 6],
-        [0, 0, 7, 0, 0, 0, 0, 5, 0],
-        [1, 6, 5, 3, 9, 0, 4, 7, 0]
-    ];
+    // var matrix = [
+    //     [0, 5, 0, 0, 7, 0, 0, 0, 1],
+    //     [8, 7, 6, 0, 2, 1, 9, 0, 3],
+    //     [0, 0, 0, 0, 3, 5, 0, 0, 0],
+    //     [0, 0, 0, 0, 4, 3, 6, 1, 0],
+    //     [0, 4, 0, 0, 0, 9, 0, 0, 2],
+    //     [0, 1, 2, 0, 5, 0, 0, 0, 4],
+    //     [0, 8, 9, 0, 6, 4, 0, 0, 0],
+    //     [0, 0, 0, 0, 0, 7, 0, 0, 0],
+    //     [1, 6, 7, 0, 0, 2, 5, 4, 0]
+    // ];
     var numberOfZeros = 0;
 
     var a = makePossibleNumbers(matrix);
 
     while (numberOfZeros > 0) {
+        var changes = 0;
+
         a = checkRows(a);
         a = checkCols(a);
         a = checkBlocks(a);
         a = findDoublesPerRow(a);
         a = findDoublesPerCol(a);
         a = findDoublesPerBlock(a);
-        console.log(a);
+
+
+        if (changes == 0) {
+            a = findUniquesPerRow(a);
+            if (changes == 0) {
+                a = findUniquesPerCol(a);
+            }
+        }
+        // console.log(a);
     }
 
-    //return a;
+
+    return a;
+
+    function findUniquesPerCol(matrix) {
+        for (let item = 0; item < 9; item++) {
+
+            for (let row = 0; row < 9; row++) {
+
+                if (typeof (matrix[row][item]) !== 'number') {
+
+                    let tempItem = matrix[row][item].split(',');
+                    //console.log(tempItem);
+                    for (let j = 0; j < tempItem.length; j++) {
+                        let count = 0;
+                        for (let r = 0; r < 9; r++) {
+
+                            if (r == row) {
+                                continue;
+                            }
+
+                            if (typeof (matrix[r][item]) !== 'number') {
+
+                                let tempArray = matrix[r][item].split(',');
+
+                                let index = tempArray.indexOf(tempItem[j] + "");
+                                if (index !== -1) {
+                                    continue;
+                                }
+                                count++;
+                            } else {
+                                count++;
+                            }
+
+                        }
+
+                        if (count == 8) {
+                            matrix [row][item] = +tempItem[j];
+                            numberOfZeros--;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return matrix;
+    }
+
+    function findUniquesPerRow(matrix) {
+        for (let row = 0; row < 9; row++) {
+
+            for (let item = 0; item < 9; item++) {
+
+                if (typeof (matrix[row][item]) !== 'number') {
+
+                    let tempItem = matrix[row][item].split(',');
+                    //console.log(tempItem);
+                    for (let j = 0; j < tempItem.length; j++) {
+                        let count = 0;
+                        for (let i = 0; i < 9; i++) {
+
+                            if (i == item) {
+                                continue;
+                            }
+
+                            if (typeof (matrix[row][i]) !== 'number') {
+
+                                let tempArray = matrix[row][i].split(',');
+
+                                let index = tempArray.indexOf(tempItem[j] + "");
+                                if (index !== -1) {
+                                    continue;
+                                }
+                                count++;
+                            } else {
+                                count++;
+                            }
+
+                        }
+
+                        if (count == 8) {
+                            matrix [row][item] = +tempItem[j];
+                            changes++;
+                            numberOfZeros--;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return matrix;
+    }
 
 
-    function findDoublesPerBlock (matrix) {
+    function findDoublesPerBlock(matrix) {
         let blockRow = 3;
         let blockCol = 3;
         let row = 0;
@@ -50,7 +152,7 @@
             }
 
             blockCol += 3;
-            item +=3;
+            item += 3;
             if (blockCol > 9) {
                 blockCol = 3;
                 blockRow += 3;
@@ -61,7 +163,7 @@
         }
         return matr;
 
-        function makeUsedNumbers (matrix, rowStart, rowEnd, colStart, colEnd) {
+        function makeUsedNumbers(matrix, rowStart, rowEnd, colStart, colEnd) {
             let usedDoubles = [];
             let usedNumbers = [];
             let rowSt = rowStart;
@@ -76,7 +178,7 @@
 
 
                     let tempItem = matrix[rowSt][item];
-                    if (typeof(matrix[rowSt][item]) !== 'number') {
+                    if (typeof (matrix[rowSt][item]) !== 'number') {
                         usedDoubles.push(tempItem);
                     }
                 }
@@ -102,14 +204,14 @@
             return usedNumbers;
         }
 
-        function blocks (matrix, rowStart, rowEnd, colStart, colEnd, usedNumbers) {
+        function blocks(matrix, rowStart, rowEnd, colStart, colEnd, usedNumbers) {
             let rowSt = rowStart;
             let rowE = rowEnd;
             let colE = colEnd;
             for (rowSt; rowSt < rowE; rowSt++) {
                 item = colStart;
                 for (item; item < colE; item++) {
-                    if (typeof(matrix[rowSt][item]) !== 'number') {
+                    if (typeof (matrix[rowSt][item]) !== 'number') {
                         let tempArray = matrix[rowSt][item].split(',');
 
                         for (let i = 0; i < usedNumbers.length; i++) {
@@ -119,7 +221,7 @@
                             if (tempArray + '' == usedNumbers[i] + '') {
                                 continue;
                             }
-                            for (let j = 0; j < usedNumbers[i].length; j++){
+                            for (let j = 0; j < usedNumbers[i].length; j++) {
                                 let index = tempArray.indexOf(usedNumbers[i][j]);
                                 if (index == -1) {
                                     continue;
@@ -128,6 +230,7 @@
                                 if (tempArray.length == 1) {
                                     matrix[rowSt][item] = +tempArray[0];
                                     numberOfZeros--;
+                                    changes++;
                                 } else {
                                     matrix[rowSt][item] = tempArray.join(',')
 
@@ -145,16 +248,16 @@
     }
 
 
-    function findDoublesPerCol (matrix) {
+    function findDoublesPerCol(matrix) {
         for (let item = 0; item < 9; item++) {
 
-            for (let row = 0; row < 9 ; row++) {
+            for (let row = 0; row < 9; row++) {
                 let count = 1;
-                if (typeof(matrix[row][item]) !== 'number') {
+                if (typeof (matrix[row][item]) !== 'number') {
 
                     let tempItem = matrix[row][item];
                     let nextItem = 0;
-                    for (let i = row + 1 ; i < 9; i++) {
+                    for (let i = row + 1; i < 9; i++) {
                         nextItem = matrix[i][item];
                         if (tempItem == nextItem) { //есть сомнения
                             count++;
@@ -165,9 +268,9 @@
 
                                 //-----------------------------------------------------------------------------------------------
 
-                                for (let row = 0; row < 9 ; row++) {
+                                for (let row = 0; row < 9; row++) {
 
-                                    if (typeof(matrix[row][item]) !== 'number') {
+                                    if (typeof (matrix[row][item]) !== 'number') {
 
                                         let tempArray = matrix[row][item].split(',');
 
@@ -186,6 +289,7 @@
                                         if (tempArray.length == 1) {
                                             matrix[row][item] = +tempArray[0];
                                             numberOfZeros--;
+                                            changes++;
                                         } else {
                                             matrix[row][item] = tempArray.join(',')
 
@@ -203,16 +307,16 @@
         return matrix;
     }
 
-    function findDoublesPerRow (matrix) {
-        for (let row = 0; row < 9; row++ ) {
+    function findDoublesPerRow(matrix) {
+        for (let row = 0; row < 9; row++) {
             let count = 1;
-            for (let item = 0; item < 9 ; item++) {
+            for (let item = 0; item < 9; item++) {
 
-                if (typeof(matrix[row][item]) !== 'number') {
+                if (typeof (matrix[row][item]) !== 'number') {
 
                     let tempItem = matrix[row][item];
 
-                    for (let i = item + 1 ; i < 9; i++) {
+                    for (let i = item + 1; i < 9; i++) {
                         if (tempItem == matrix[row][i]) {
                             count++;
                             //console.log(tempItem + ' row: ' + row + ' item:' + item + ' | ' + matrix[row][i] + ' row: ' + row + ' item:' + i);
@@ -222,9 +326,9 @@
 
                                 //-----------------------------------------------------------------------------------------------
 
-                                for (let item = 0; item < 9 ; item++) {
+                                for (let item = 0; item < 9; item++) {
 
-                                    if (typeof(matrix[row][item]) !== 'number') {
+                                    if (typeof (matrix[row][item]) !== 'number') {
 
                                         let tempArray = matrix[row][item].split(',');
 
@@ -243,6 +347,7 @@
                                         if (tempArray.length == 1) {
                                             matrix[row][item] = +tempArray[0];
                                             numberOfZeros--;
+                                            changes++;
                                         } else {
                                             matrix[row][item] = tempArray.join(',')
 
@@ -261,7 +366,7 @@
     }
 
 
-    function makePossibleNumbers (matrix) {
+    function makePossibleNumbers(matrix) {
         let initPossibleNumbers = '1,2,3,4,5,6,7,8,9'; //не баг, а фича: с массивом не работает перебор и удаление элементов
 
         for (let row = 0; row < 9; row++) {
@@ -276,22 +381,22 @@
         return matrix;
     };
 
-    function checkRows (matrix) {
+    function checkRows(matrix) {
 
-        for (let row = 0; row < 9; row++ ) {
+        for (let row = 0; row < 9; row++) {
 
             let usedNumbers = [];
             for (let item = 0; item < 9; item++) {
 
-                if (typeof(matrix[row][item]) == 'number') {
+                if (typeof (matrix[row][item]) == 'number') {
                     usedNumbers.push(matrix[row][item]);
                 }
             }
             //console.log (usedNumbers);
 
-            for (let item = 0; item < 9 ; item++) {
+            for (let item = 0; item < 9; item++) {
 
-                if (typeof(matrix[row][item]) !== 'number') {
+                if (typeof (matrix[row][item]) !== 'number') {
 
                     let tempArray = matrix[row][item].split(',');
 
@@ -306,6 +411,7 @@
                     if (tempArray.length == 1) {
                         matrix[row][item] = +tempArray[0];
                         numberOfZeros--;
+                        changes++;
                     } else {
                         matrix[row][item] = tempArray.join(',')
                     }
@@ -317,14 +423,14 @@
         return matrix;
     }
 
-    function checkCols (matrix) {
+    function checkCols(matrix) {
 
-        for (let item = 0; item < 9; item++ ) {
+        for (let item = 0; item < 9; item++) {
 
             let usedNumbers = [];
             for (let row = 0; row < 9; row++) {
 
-                if (typeof(matrix[row][item]) == 'number') {
+                if (typeof (matrix[row][item]) == 'number') {
                     usedNumbers.push(matrix[row][item]);
                 }
             }
@@ -332,9 +438,9 @@
             // console.log (usedNumbers);
             // console.log ('-------------------------');
 
-            for (let row = 0; row < 9 ; row++) {
+            for (let row = 0; row < 9; row++) {
 
-                if (typeof(matrix[row][item]) !== 'number') {
+                if (typeof (matrix[row][item]) !== 'number') {
 
                     let tempArray = matrix[row][item].split(',');
 
@@ -349,6 +455,7 @@
                     if (tempArray.length == 1) {
                         matrix[row][item] = +tempArray[0];
                         numberOfZeros--;
+                        changes++;
                     } else {
                         matrix[row][item] = tempArray.join(',')
                     }
@@ -361,7 +468,7 @@
         return matrix;
     }
 
-    function checkBlocks (matrix) {
+    function checkBlocks(matrix) {
 
         let blockRow = 3;
         let blockCol = 3;
@@ -393,7 +500,7 @@
         return matr;
 
 
-        function makeUsedNumbers (matrix, rowStart, rowEnd, colStart, colEnd) {
+        function makeUsedNumbers(matrix, rowStart, rowEnd, colStart, colEnd) {
             let usedNumbers = [];
             let rowSt = rowStart;
             let rowE = rowEnd;
@@ -401,7 +508,7 @@
             for (rowSt; rowSt < rowE; rowSt++) {
                 item = colStart;
                 for (item; item < colE; item++) {
-                    if (typeof(matrix[rowSt][item]) == 'number') {
+                    if (typeof (matrix[rowSt][item]) == 'number') {
                         usedNumbers.push(matrix[rowSt][item]);
                     }
                 }
@@ -409,7 +516,7 @@
             return usedNumbers;
         }
 
-        function blocks (matrix, rowStart, rowEnd, colStart, colEnd, usedNumbers) {
+        function blocks(matrix, rowStart, rowEnd, colStart, colEnd, usedNumbers) {
 
             let rowSt = rowStart;
             let rowE = rowEnd;
@@ -417,7 +524,7 @@
             for (rowSt; rowSt < rowE; rowSt++) {
                 item = colStart;
                 for (item; item < colE; item++) {
-                    if (typeof(matrix[rowSt][item]) !== 'number') {
+                    if (typeof (matrix[rowSt][item]) !== 'number') {
                         let tempArray = matrix[rowSt][item].split(',');
 
                         for (let i = 0; i < usedNumbers.length; i++) {
@@ -429,6 +536,7 @@
                             if (tempArray.length == 1) {
                                 matrix[rowSt][item] = +tempArray[0];
                                 numberOfZeros--;
+                                changes++;
                             } else {
                                 matrix[rowSt][item] = tempArray.join(',')
 
@@ -440,5 +548,5 @@
             return matrix;
         }
     }
-//};
+}
 // https://habr.com/ru/post/134071/
