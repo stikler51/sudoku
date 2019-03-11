@@ -1,17 +1,17 @@
-// module.exports = function solveSudoku(matrix) {
+module.exports = function solveSudoku(matrix) {
     // your solution
-
-    var matrix = [
-        [0, 0, 0, 9, 7, 0, 0, 0, 2],
-        [9, 0, 5, 0, 0, 0, 0, 6, 0],
-        [0, 3, 0, 0, 0, 1, 9, 5, 0],
-        [0, 9, 0, 0, 0, 4, 2, 0, 3],
-        [6, 0, 4, 2, 0, 0, 0, 9, 0],
-        [3, 2, 1, 7, 0, 8, 6, 0, 0],
-        [0, 0, 0, 0, 0, 0, 3, 2, 6],
-        [2, 6, 0, 0, 0, 0, 1, 0, 4],
-        [0, 0, 0, 0, 2, 6, 5, 0, 0]
-    ];
+    //
+    // var matrix = [
+    //     [0, 0, 4, 0, 5, 0, 0, 0, 0],
+    //     [3, 5, 0, 0, 0, 0, 6, 9, 7],
+    //     [6, 7, 0, 0, 0, 0, 0, 0, 0],
+    //     [4, 0, 0, 6, 8, 0, 0, 0, 0],
+    //     [0, 6, 0, 0, 0, 0, 0, 8, 0],
+    //     [0, 8, 0, 5, 0, 0, 3, 0, 0],
+    //     [0, 3, 0, 9, 0, 0, 7, 0, 5],
+    //     [0, 4, 0, 8, 0, 0, 0, 0, 9],
+    //     [0, 0, 0, 0, 0, 3, 0, 1, 0]
+    // ];
     var numberOfZeros = countZeros(matrix);
 
     var a = makePossibleNumbers(matrix);
@@ -24,9 +24,10 @@
         a = checkCols(a);
         a = checkBlocks(a);
         a = findDoublesPerRow(a);
-
         a = findDoublesPerCol(a);
         a = findDoublesPerBlock(a);
+
+
 
 
         if (changes == 0) {
@@ -41,19 +42,13 @@
             }
         }
 
-        // a = checkRows(a);
-        // a = checkCols(a);
-        // a = checkBlocks(a);
-        // a = findDoublesPerRow(a);
-        // a = findDoublesPerCol(a);
 
-        console.log(a);
-        // //
-        // console.log(numberOfZeros);
+       // console.log(a);
+
     }
 
 
-     // return a;
+     return a;
 
     function backtracking(matrix) {
         let copyMatrix = matrix;
@@ -66,7 +61,7 @@
                 if (typeof (copyMatrix[row][item]) !== 'number') {
                     let tempItem = matrix[row][item].split(',');
                     if (tempItem.length == 2) {
-                        matrix[row][item] = tempItem[index];
+                        matrix[row][item] = +tempItem[index];
                         numberOfZeros = countZeros(matrix);
                         return matrix;
                     }
@@ -346,9 +341,9 @@
 
     function findDoublesPerRow(matrix) {
         for (let row = 0; row < 9; row++) {
-            let count = 1;
-            for (let item = 0; item < 9; item++) {
 
+            for (let item = 0; item < 9; item++) {
+                let count = 1;
                 if (typeof (matrix[row][item]) !== 'number') {
 
                     let tempItem = matrix[row][item];
@@ -596,5 +591,5 @@
             return matrix;
         }
     }
-// }
+}
 // https://habr.com/ru/post/134071/
