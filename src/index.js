@@ -1,43 +1,79 @@
-module.exports = function solveSudoku(matrix) {
+// module.exports = function solveSudoku(matrix) {
     // your solution
 
-    // var matrix = [
-    //     [0, 5, 0, 0, 7, 0, 0, 0, 1],
-    //     [8, 7, 6, 0, 2, 1, 9, 0, 3],
-    //     [0, 0, 0, 0, 3, 5, 0, 0, 0],
-    //     [0, 0, 0, 0, 4, 3, 6, 1, 0],
-    //     [0, 4, 0, 0, 0, 9, 0, 0, 2],
-    //     [0, 1, 2, 0, 5, 0, 0, 0, 4],
-    //     [0, 8, 9, 0, 6, 4, 0, 0, 0],
-    //     [0, 0, 0, 0, 0, 7, 0, 0, 0],
-    //     [1, 6, 7, 0, 0, 2, 5, 4, 0]
-    // ];
-    var numberOfZeros = 0;
+    var matrix = [
+        [0, 0, 0, 9, 7, 0, 0, 0, 2],
+        [9, 0, 5, 0, 0, 0, 0, 6, 0],
+        [0, 3, 0, 0, 0, 1, 9, 5, 0],
+        [0, 9, 0, 0, 0, 4, 2, 0, 3],
+        [6, 0, 4, 2, 0, 0, 0, 9, 0],
+        [3, 2, 1, 7, 0, 8, 6, 0, 0],
+        [0, 0, 0, 0, 0, 0, 3, 2, 6],
+        [2, 6, 0, 0, 0, 0, 1, 0, 4],
+        [0, 0, 0, 0, 2, 6, 5, 0, 0]
+    ];
+    var numberOfZeros = countZeros(matrix);
 
     var a = makePossibleNumbers(matrix);
 
     while (numberOfZeros > 0) {
+
         var changes = 0;
 
         a = checkRows(a);
         a = checkCols(a);
         a = checkBlocks(a);
         a = findDoublesPerRow(a);
+
         a = findDoublesPerCol(a);
         a = findDoublesPerBlock(a);
 
 
         if (changes == 0) {
             a = findUniquesPerRow(a);
+
             if (changes == 0) {
                 a = findUniquesPerCol(a);
+
+                if (changes == 0) {
+                    a = backtracking(a)
+                }
             }
         }
-        // console.log(a);
+
+        // a = checkRows(a);
+        // a = checkCols(a);
+        // a = checkBlocks(a);
+        // a = findDoublesPerRow(a);
+        // a = findDoublesPerCol(a);
+
+        console.log(a);
+        // //
+        // console.log(numberOfZeros);
     }
 
 
-    return a;
+     // return a;
+
+    function backtracking(matrix) {
+        let copyMatrix = matrix;
+        // let copyNumberOfZeros = numberOfZeros;
+        // let localChanges = 0;
+        let index = 0;
+
+        for (let row = 0; row < 9; row++) {
+            for (let item = 0; item < 9; item++) {
+                if (typeof (copyMatrix[row][item]) !== 'number') {
+                    let tempItem = matrix[row][item].split(',');
+                    if (tempItem.length == 2) {
+                        matrix[row][item] = tempItem[index];
+                        numberOfZeros = countZeros(matrix);
+                        return matrix;
+                    }
+                }
+            }
+        }
+    }
 
     function findUniquesPerCol(matrix) {
         for (let item = 0; item < 9; item++) {
@@ -73,7 +109,7 @@ module.exports = function solveSudoku(matrix) {
 
                         if (count == 8) {
                             matrix [row][item] = +tempItem[j];
-                            numberOfZeros--;
+                            numberOfZeros = countZeros(matrix);;
                             break;
                         }
                     }
@@ -119,7 +155,7 @@ module.exports = function solveSudoku(matrix) {
                         if (count == 8) {
                             matrix [row][item] = +tempItem[j];
                             changes++;
-                            numberOfZeros--;
+                            numberOfZeros = countZeros(matrix);;
                             break;
                         }
                     }
@@ -185,6 +221,7 @@ module.exports = function solveSudoku(matrix) {
             }
 
             for (let i = 0; i < usedDoubles.length; i++) {
+                count = 1;
                 for (let j = i + 1; j < usedDoubles.length; j++) {
                     if (usedDoubles[i] == usedDoubles[j]) {
                         count++;
@@ -229,7 +266,7 @@ module.exports = function solveSudoku(matrix) {
                                 tempArray.splice(index, 1);
                                 if (tempArray.length == 1) {
                                     matrix[rowSt][item] = +tempArray[0];
-                                    numberOfZeros--;
+                                    numberOfZeros = countZeros(matrix);;
                                     changes++;
                                 } else {
                                     matrix[rowSt][item] = tempArray.join(',')
@@ -288,7 +325,7 @@ module.exports = function solveSudoku(matrix) {
 
                                         if (tempArray.length == 1) {
                                             matrix[row][item] = +tempArray[0];
-                                            numberOfZeros--;
+                                            numberOfZeros = countZeros(matrix);;
                                             changes++;
                                         } else {
                                             matrix[row][item] = tempArray.join(',')
@@ -346,7 +383,7 @@ module.exports = function solveSudoku(matrix) {
 
                                         if (tempArray.length == 1) {
                                             matrix[row][item] = +tempArray[0];
-                                            numberOfZeros--;
+                                            numberOfZeros = countZeros(matrix);;
                                             changes++;
                                         } else {
                                             matrix[row][item] = tempArray.join(',')
@@ -374,11 +411,22 @@ module.exports = function solveSudoku(matrix) {
             for (let item = 0; item < 9; item++) {
                 if (matrix[row][item] === 0) {
                     matrix[row][item] = initPossibleNumbers;
-                    numberOfZeros++;
                 }
             }
         }
         return matrix;
+    };
+
+    function countZeros(matrix) {
+        let zeros = 0;
+        for (let row = 0; row < 9; row++) {
+            for (let item = 0; item < 9; item++) {
+                if (typeof (matrix[row][item]) !== 'number' || matrix[row][item] == 0) {
+                    zeros++;
+                }
+            }
+        }
+        return zeros;
     };
 
     function checkRows(matrix) {
@@ -410,7 +458,7 @@ module.exports = function solveSudoku(matrix) {
 
                     if (tempArray.length == 1) {
                         matrix[row][item] = +tempArray[0];
-                        numberOfZeros--;
+                        numberOfZeros = countZeros(matrix);;
                         changes++;
                     } else {
                         matrix[row][item] = tempArray.join(',')
@@ -454,7 +502,7 @@ module.exports = function solveSudoku(matrix) {
 
                     if (tempArray.length == 1) {
                         matrix[row][item] = +tempArray[0];
-                        numberOfZeros--;
+                        numberOfZeros = countZeros(matrix);;
                         changes++;
                     } else {
                         matrix[row][item] = tempArray.join(',')
@@ -535,7 +583,7 @@ module.exports = function solveSudoku(matrix) {
                             tempArray.splice(index, 1);
                             if (tempArray.length == 1) {
                                 matrix[rowSt][item] = +tempArray[0];
-                                numberOfZeros--;
+                                numberOfZeros = countZeros(matrix);;
                                 changes++;
                             } else {
                                 matrix[rowSt][item] = tempArray.join(',')
@@ -548,5 +596,5 @@ module.exports = function solveSudoku(matrix) {
             return matrix;
         }
     }
-}
+// }
 // https://habr.com/ru/post/134071/
