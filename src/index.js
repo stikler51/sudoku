@@ -1,17 +1,24 @@
-module.exports = function solveSudoku(matrix) {
+// module.exports = function solveSudoku(matrix) {
     // your solution
     //
-    // var matrix = [
-    //     [0, 0, 4, 0, 5, 0, 0, 0, 0],
-    //     [3, 5, 0, 0, 0, 0, 6, 9, 7],
-    //     [6, 7, 0, 0, 0, 0, 0, 0, 0],
-    //     [4, 0, 0, 6, 8, 0, 0, 0, 0],
-    //     [0, 6, 0, 0, 0, 0, 0, 8, 0],
-    //     [0, 8, 0, 5, 0, 0, 3, 0, 0],
-    //     [0, 3, 0, 9, 0, 0, 7, 0, 5],
-    //     [0, 4, 0, 8, 0, 0, 0, 0, 9],
-    //     [0, 0, 0, 0, 0, 3, 0, 1, 0]
-    // ];
+    var matrix = [
+        [0, 0, 2, 0, 0, 9, 0, 0, 4],
+        [0, 1, 5, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 3, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 4, 1, 8, 0, 5],
+        [0, 8, 0, 5, 0, 7, 0, 4, 0],
+        [5, 0, 9, 8, 6, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 8, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 2, 9, 0],
+        [6, 0, 0, 7, 0, 0, 3, 0, 0]
+    ];
+
+    var copyMatrix = [];
+    var copyNumberOfZeros = 0;
+    var copySelectedNumber = 0;
+    var copyRow = 0;
+    var copyItem = 0;
+
     var numberOfZeros = countZeros(matrix);
 
     var a = makePossibleNumbers(matrix);
@@ -26,48 +33,97 @@ module.exports = function solveSudoku(matrix) {
         a = findDoublesPerRow(a);
         a = findDoublesPerCol(a);
         a = findDoublesPerBlock(a);
-
-
+        findSameNumbersInRow();
+        findSameNumbersInCol();
 
 
         if (changes == 0) {
             a = findUniquesPerRow(a);
-
             if (changes == 0) {
                 a = findUniquesPerCol(a);
-
-                if (changes == 0) {
-                    a = backtracking(a)
+                if (copyMatrix !== []) {
+                   a = toThePreviousStep(a);
+                } else {
+                    a = backtracking(a);
                 }
             }
         }
 
 
-       // console.log(a);
+     console.log(a);
+    }
+     // return a;
 
+    function copySudoku(matrix) {
+        let copy = [];
+        for (let row = 0; row < 9; row++) {
+            let temp = matrix[row].slice();
+            copy.push(temp);
+        }
+        return copy;
     }
 
-
-     return a;
-
     function backtracking(matrix) {
-        let copyMatrix = matrix;
-        // let copyNumberOfZeros = numberOfZeros;
-        // let localChanges = 0;
-        let index = 0;
-
+        copyMatrix = copySudoku(matrix);
         for (let row = 0; row < 9; row++) {
             for (let item = 0; item < 9; item++) {
-                if (typeof (copyMatrix[row][item]) !== 'number') {
+                if (typeof (matrix[row][item]) !== 'number') {
                     let tempItem = matrix[row][item].split(',');
                     if (tempItem.length == 2) {
-                        matrix[row][item] = +tempItem[index];
+                        matrix[row][item] = +tempItem[0];
+                        copySelectedNumber = +tempItem[0];
+                        copyRow = row;
+                        copyItem = item;
                         numberOfZeros = countZeros(matrix);
+                        copyNumberOfZeros = numberOfZeros;
                         return matrix;
                     }
                 }
             }
         }
+    }
+
+    function findSameNumbersInRow() {
+        for (let row = 0; row < 9; row++) {
+            for (let item = 0; item < 9; item++) {
+                if (typeof (a[row][item]) == 'number') {
+                    let tempItem = a[row][item];
+
+                    for (let i = item + 1; i < 9; i++) {
+                        if (tempItem == a[row][i] || tempItem == 0) {
+                            a = toThePreviousStep(a);
+                            return a;
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+function findSameNumbersInCol() {
+    for (let item = 0; item < 9; item++) {
+        for (let row = 0; row < 9; row++) {
+            if (typeof (a[row][item]) == 'number') {
+                let tempItem = a[row][item];
+
+                for (let i = row + 1; i < 9; i++) {
+                    if (tempItem == a[i][item] || tempItem == 0) {
+                        a = toThePreviousStep(a);
+                        return a;
+                    }
+                }
+            }
+        }
+    }
+};
+
+    function toThePreviousStep(matrix) {
+        matrix = copySudoku(copyMatrix);
+        numberOfZeros = copyNumberOfZeros;
+        let tempItem = matrix[copyRow][copyItem].split(',');
+        let index = tempItem.indexOf(copySelectedNumber + '');
+        matrix[copyRow][copyItem] = +tempItem[index + 1];
+        return matrix;
     }
 
     function findUniquesPerCol(matrix) {
@@ -591,5 +647,5 @@ module.exports = function solveSudoku(matrix) {
             return matrix;
         }
     }
-}
+// }
 // https://habr.com/ru/post/134071/
