@@ -1,23 +1,23 @@
-// module.exports = function solveSudoku(matrix) {
+module.exports = function solveSudoku(matrix) {
     // your solution
     //
-    var matrix = [
-        [0, 0, 2, 0, 0, 9, 0, 0, 4],
-        [0, 1, 5, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 3, 0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 4, 1, 8, 0, 5],
-        [0, 8, 0, 5, 0, 7, 0, 4, 0],
-        [5, 0, 9, 8, 6, 0, 0, 0, 0],
-        [1, 0, 0, 0, 0, 8, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 2, 9, 0],
-        [6, 0, 0, 7, 0, 0, 3, 0, 0]
-    ];
+    // var matrix = [
+    //     [0, 0, 2, 0, 0, 9, 0, 0, 4],
+    //     [0, 1, 5, 0, 0, 0, 0, 0, 0],
+    //     [0, 0, 0, 3, 0, 0, 0, 0, 1],
+    //     [0, 0, 0, 0, 4, 1, 8, 0, 5],
+    //     [0, 8, 0, 5, 0, 7, 0, 4, 0],
+    //     [5, 0, 9, 8, 6, 0, 0, 0, 0],
+    //     [1, 0, 0, 0, 0, 8, 0, 0, 0],
+    //     [0, 0, 0, 0, 0, 0, 2, 9, 0],
+    //     [6, 0, 0, 7, 0, 0, 3, 0, 0]
+    // ];
 
     var copyMatrix = [];
-    var copyNumberOfZeros = 0;
-    var copySelectedNumber = 0;
-    var copyRow = 0;
-    var copyItem = 0;
+    var copyNumberOfZeros = [];
+    var copySelectedNumber = [];
+    var copyRow = [];
+    var copyItem = [];
 
     var numberOfZeros = countZeros(matrix);
 
@@ -41,18 +41,18 @@
             a = findUniquesPerRow(a);
             if (changes == 0) {
                 a = findUniquesPerCol(a);
-                if (copyMatrix !== []) {
-                   a = toThePreviousStep(a);
-                } else {
+                if (changes == 0) {
+                //    a = toThePreviousStep(a);
+                // } else {
                     a = backtracking(a);
                 }
             }
         }
 
 
-     console.log(a);
+     // console.log(a);
     }
-     // return a;
+     return a;
 
     function copySudoku(matrix) {
         let copy = [];
@@ -64,18 +64,18 @@
     }
 
     function backtracking(matrix) {
-        copyMatrix = copySudoku(matrix);
+        copyMatrix.push(copySudoku(matrix));
         for (let row = 0; row < 9; row++) {
             for (let item = 0; item < 9; item++) {
                 if (typeof (matrix[row][item]) !== 'number') {
                     let tempItem = matrix[row][item].split(',');
                     if (tempItem.length == 2) {
                         matrix[row][item] = +tempItem[0];
-                        copySelectedNumber = +tempItem[0];
-                        copyRow = row;
-                        copyItem = item;
+                        copySelectedNumber.push(+tempItem[0]);
+                        copyRow.push(row);
+                        copyItem.push(item);
                         numberOfZeros = countZeros(matrix);
-                        copyNumberOfZeros = numberOfZeros;
+                        copyNumberOfZeros.push(numberOfZeros);
                         return matrix;
                     }
                 }
@@ -118,11 +118,19 @@ function findSameNumbersInCol() {
 };
 
     function toThePreviousStep(matrix) {
-        matrix = copySudoku(copyMatrix);
-        numberOfZeros = copyNumberOfZeros;
-        let tempItem = matrix[copyRow][copyItem].split(',');
-        let index = tempItem.indexOf(copySelectedNumber + '');
-        matrix[copyRow][copyItem] = +tempItem[index + 1];
+        matrix = copyMatrix.pop();
+        numberOfZeros = copyNumberOfZeros.pop();
+
+        let c = copyRow.pop();
+        let b = copyItem.pop();
+        let d = copySelectedNumber.pop();
+        let tempItem = matrix[c][b].split(',');
+        let index = tempItem.indexOf(d + '');
+        if (index == tempItem.length - 1) {
+            a = toThePreviousStep(a);
+        } else {
+            matrix[c][b] = +tempItem[index + 1];
+        }
         return matrix;
     }
 
@@ -647,5 +655,5 @@ function findSameNumbersInCol() {
             return matrix;
         }
     }
-// }
+}
 // https://habr.com/ru/post/134071/
