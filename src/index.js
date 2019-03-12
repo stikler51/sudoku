@@ -1,18 +1,5 @@
 module.exports = function solveSudoku(matrix) {
     // your solution
-    //
-    // var matrix = [
-    //     [0, 0, 2, 0, 0, 9, 0, 0, 4],
-    //     [0, 1, 5, 0, 0, 0, 0, 0, 0],
-    //     [0, 0, 0, 3, 0, 0, 0, 0, 1],
-    //     [0, 0, 0, 0, 4, 1, 8, 0, 5],
-    //     [0, 8, 0, 5, 0, 7, 0, 4, 0],
-    //     [5, 0, 9, 8, 6, 0, 0, 0, 0],
-    //     [1, 0, 0, 0, 0, 8, 0, 0, 0],
-    //     [0, 0, 0, 0, 0, 0, 2, 9, 0],
-    //     [6, 0, 0, 7, 0, 0, 3, 0, 0]
-    // ];
-
     var copyMatrix = [];
     var copyNumberOfZeros = [];
     var copySelectedNumber = [];
@@ -20,9 +7,7 @@ module.exports = function solveSudoku(matrix) {
     var copyItem = [];
 
     var numberOfZeros = countZeros(matrix);
-
     var a = makePossibleNumbers(matrix);
-
     while (numberOfZeros > 0) {
 
         var changes = 0;
@@ -36,21 +21,15 @@ module.exports = function solveSudoku(matrix) {
         findSameNumbersInRow();
         findSameNumbersInCol();
 
-
         if (changes == 0) {
             a = findUniquesPerRow(a);
             if (changes == 0) {
                 a = findUniquesPerCol(a);
                 if (changes == 0) {
-                //    a = toThePreviousStep(a);
-                // } else {
                     a = backtracking(a);
                 }
             }
         }
-
-
-     // console.log(a);
     }
      return a;
 
@@ -100,7 +79,7 @@ module.exports = function solveSudoku(matrix) {
         }
     };
 
-function findSameNumbersInCol() {
+    function findSameNumbersInCol() {
     for (let item = 0; item < 9; item++) {
         for (let row = 0; row < 9; row++) {
             if (typeof (a[row][item]) == 'number') {
@@ -138,15 +117,13 @@ function findSameNumbersInCol() {
         for (let item = 0; item < 9; item++) {
 
             for (let row = 0; row < 9; row++) {
-
                 if (typeof (matrix[row][item]) !== 'number') {
-
                     let tempItem = matrix[row][item].split(',');
-                    //console.log(tempItem);
+
                     for (let j = 0; j < tempItem.length; j++) {
                         let count = 0;
-                        for (let r = 0; r < 9; r++) {
 
+                        for (let r = 0; r < 9; r++) {
                             if (r == row) {
                                 continue;
                             }
@@ -175,7 +152,6 @@ function findSameNumbersInCol() {
                 }
             }
         }
-
         return matrix;
     }
 
@@ -187,7 +163,7 @@ function findSameNumbersInCol() {
                 if (typeof (matrix[row][item]) !== 'number') {
 
                     let tempItem = matrix[row][item].split(',');
-                    //console.log(tempItem);
+
                     for (let j = 0; j < tempItem.length; j++) {
                         let count = 0;
                         for (let i = 0; i < 9; i++) {
@@ -208,7 +184,6 @@ function findSameNumbersInCol() {
                             } else {
                                 count++;
                             }
-
                         }
 
                         if (count == 8) {
@@ -221,7 +196,6 @@ function findSameNumbersInCol() {
                 }
             }
         }
-
         return matrix;
     }
 
@@ -239,7 +213,7 @@ function findSameNumbersInCol() {
             let b = item;
             let r = row;
             let usedNumbers = makeUsedNumbers(matrix, row, blockRow, i, blockCol);
-            //console.log(usedNumbers);
+
             matr = blocks(matrix, r, blockRow, b, blockCol, usedNumbers);
 
             if (blockRow >= 9 && blockCol >= 9) {
@@ -270,8 +244,6 @@ function findSameNumbersInCol() {
 
                 let item = colStart;
                 for (item; item < colE; item++) {
-
-
                     let tempItem = matrix[rowSt][item];
                     if (typeof (matrix[rowSt][item]) !== 'number') {
                         usedDoubles.push(tempItem);
@@ -292,11 +264,9 @@ function findSameNumbersInCol() {
                             usedNumbers.splice(usedNumbers.length - 1, 1);
                             count = 1;
                         }
-                        //console.log(usedNumbers);
                     }
                 }
             }
-            //console.log(usedNumbers);
             return usedNumbers;
         }
 
@@ -311,9 +281,6 @@ function findSameNumbersInCol() {
                         let tempArray = matrix[rowSt][item].split(',');
 
                         for (let i = 0; i < usedNumbers.length; i++) {
-                            // console.log(tempArray + '');
-                            // console.log(usedNumbers[i]+'');
-                            // console.log('-----------------------');
                             if (tempArray + '' == usedNumbers[i] + '') {
                                 continue;
                             }
@@ -340,7 +307,6 @@ function findSameNumbersInCol() {
             item = colStart;
             return matrix;
         }
-
     }
 
 
@@ -355,19 +321,13 @@ function findSameNumbersInCol() {
                     let nextItem = 0;
                     for (let i = row + 1; i < 9; i++) {
                         nextItem = matrix[i][item];
-                        if (tempItem == nextItem) { //есть сомнения
+                        if (tempItem == nextItem) {
                             count++;
-                            //console.log(tempItem + ' row: ' + row + ' item:' + item + ' | ' + matrix[row][i] + ' row: ' + row + ' item:' + i);
-
                             if (count > 1 && tempItem.split(',').length == count) {
                                 let usedNumbers = tempItem.split(',');
 
-                                //-----------------------------------------------------------------------------------------------
-
                                 for (let row = 0; row < 9; row++) {
-
                                     if (typeof (matrix[row][item]) !== 'number') {
-
                                         let tempArray = matrix[row][item].split(',');
 
                                         for (let i = 0; i < usedNumbers.length; i++) {
@@ -384,13 +344,11 @@ function findSameNumbersInCol() {
 
                                         if (tempArray.length == 1) {
                                             matrix[row][item] = +tempArray[0];
-                                            numberOfZeros = countZeros(matrix);;
+                                            numberOfZeros = countZeros(matrix);
                                             changes++;
                                         } else {
-                                            matrix[row][item] = tempArray.join(',')
-
+                                            matrix[row][item] = tempArray.join(',');
                                         }
-
                                     }
                                 }
                             }
@@ -399,7 +357,6 @@ function findSameNumbersInCol() {
                 }
             }
         }
-
         return matrix;
     }
 
@@ -409,23 +366,16 @@ function findSameNumbersInCol() {
             for (let item = 0; item < 9; item++) {
                 let count = 1;
                 if (typeof (matrix[row][item]) !== 'number') {
-
                     let tempItem = matrix[row][item];
 
                     for (let i = item + 1; i < 9; i++) {
                         if (tempItem == matrix[row][i]) {
                             count++;
-                            //console.log(tempItem + ' row: ' + row + ' item:' + item + ' | ' + matrix[row][i] + ' row: ' + row + ' item:' + i);
-
                             if (count > 1 && tempItem.split(',').length == count) {
                                 let usedNumbers = tempItem.split(',');
 
-                                //-----------------------------------------------------------------------------------------------
-
                                 for (let item = 0; item < 9; item++) {
-
                                     if (typeof (matrix[row][item]) !== 'number') {
-
                                         let tempArray = matrix[row][item].split(',');
 
                                         for (let i = 0; i < usedNumbers.length; i++) {
@@ -442,13 +392,11 @@ function findSameNumbersInCol() {
 
                                         if (tempArray.length == 1) {
                                             matrix[row][item] = +tempArray[0];
-                                            numberOfZeros = countZeros(matrix);;
+                                            numberOfZeros = countZeros(matrix);
                                             changes++;
                                         } else {
-                                            matrix[row][item] = tempArray.join(',')
-
+                                            matrix[row][item] = tempArray.join(',');
                                         }
-
                                     }
                                 }
                             }
@@ -457,7 +405,6 @@ function findSameNumbersInCol() {
                 }
             }
         }
-
         return matrix;
     }
 
@@ -491,20 +438,16 @@ function findSameNumbersInCol() {
     function checkRows(matrix) {
 
         for (let row = 0; row < 9; row++) {
-
             let usedNumbers = [];
-            for (let item = 0; item < 9; item++) {
 
+            for (let item = 0; item < 9; item++) {
                 if (typeof (matrix[row][item]) == 'number') {
                     usedNumbers.push(matrix[row][item]);
                 }
             }
-            //console.log (usedNumbers);
 
             for (let item = 0; item < 9; item++) {
-
                 if (typeof (matrix[row][item]) !== 'number') {
-
                     let tempArray = matrix[row][item].split(',');
 
                     for (let i = 0; i < usedNumbers.length; i++) {
@@ -522,10 +465,8 @@ function findSameNumbersInCol() {
                     } else {
                         matrix[row][item] = tempArray.join(',')
                     }
-
                 }
             }
-            //console.log (matrix);
         }
         return matrix;
     }
@@ -541,14 +482,9 @@ function findSameNumbersInCol() {
                     usedNumbers.push(matrix[row][item]);
                 }
             }
-            // console.log ('-------------------------');
-            // console.log (usedNumbers);
-            // console.log ('-------------------------');
 
             for (let row = 0; row < 9; row++) {
-
                 if (typeof (matrix[row][item]) !== 'number') {
-
                     let tempArray = matrix[row][item].split(',');
 
                     for (let i = 0; i < usedNumbers.length; i++) {
@@ -566,11 +502,8 @@ function findSameNumbersInCol() {
                     } else {
                         matrix[row][item] = tempArray.join(',')
                     }
-
                 }
-
             }
-            //console.log (matrix);
         }
         return matrix;
     }
@@ -656,4 +589,3 @@ function findSameNumbersInCol() {
         }
     }
 }
-// https://habr.com/ru/post/134071/
